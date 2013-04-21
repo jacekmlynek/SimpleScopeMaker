@@ -1,11 +1,5 @@
-require('./ScopeMaker.js');
-
 describe('ScopeMaker', function(){
-    var subject = ScopeMaker;
-    
-    beforeEach(function(){
-        window = {}; 
-    });
+    var subject = require('./ScopeMaker.js').ScopeMaker;
     
     var sherableInvalidPathExample = function(path){
         it('should raise exception with message: You must pass scope path', function(){
@@ -25,47 +19,47 @@ describe('ScopeMaker', function(){
         sherableInvalidPathExample('');
     });
 
-    describe('Full scope path is not null empty or undefined', function() {
+    describe( 'Full scope path is valid', function() {
         it('should return not null object', function(){
             expect(subject('scope')).not.toBeNull();
         });
 
-        it('should add first path part as global window object property', function(){
+        it('should add first path part as global globalObject object property', function(){
             subject('firstPart');
             
-            expect(window['firstPart']).not.toBeUndefined();
+            expect(firstPart).not.toBeUndefined();
         });
 
-        it('should not create new global window property if already exist', function(){
+        it('should not create new global globalObject property if already exist', function(){
             var existingProperty = {child: {}};
-            window['existingProperty'] = existingProperty;
+            existingProperty = existingProperty;
             
             subject('existingProperty');
 
-            expect(window['existingProperty']).not.toBe({});
-            expect(window['existingProperty']).toBe(existingProperty);
+            expect(existingProperty).not.toBe({});
+            expect(existingProperty).toBe(existingProperty);
         });
 
         describe('Full path contains more that one segment', function(){
             it('should add next segment as property to previous one', function() {
                 subject('previous.next');
 
-                expect(window['previous']['next']).not.toBeUndefined();
+                expect(previous['next']).not.toBeUndefined();
             });
 
-            it('should return object equal to last nested property of global window', function(){
+            it('should return object equal to last nested property of global globalObject', function(){
                 var scope = subject('first.last');
                 scope.NewProperty = "Value to change defualt empty object";
 
-                expect(scope).toBe(window['first']['last']);
+                expect(scope).toBe(first['last']);
             });
 
             describe('Full path contains white space around dots', function(){
                 it('should add new properties ignoring white spaces', function(){
                     subject('firstDummyName   .  secondDummyName');
 
-                    expect(window['firstDummyName']).not.toBeUndefined();
-                    expect(window['firstDummyName']['secondDummyName']).not.toBeUndefined();
+                    expect(firstDummyName).not.toBeUndefined();
+                    expect(firstDummyName['secondDummyName']).not.toBeUndefined();
                 });
             });
         });
