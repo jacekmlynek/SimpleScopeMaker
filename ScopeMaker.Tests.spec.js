@@ -47,7 +47,7 @@ describe('ScopeMaker', function(){
                 expect(previous['next']).not.toBeUndefined();
             });
 
-            it('should return object equal to last nested property of global globalObject', function(){
+            it('should return object equal to last nested property of globalObject', function(){
                 var scope = subject('first.last');
                 scope.NewProperty = "Value to change defualt empty object";
 
@@ -61,6 +61,27 @@ describe('ScopeMaker', function(){
                     expect(firstDummyName).not.toBeUndefined();
                     expect(firstDummyName['secondDummyName']).not.toBeUndefined();
                 });
+            });
+        });
+
+        describe('Block of code is not null nor undefined', function() {
+            it('Should call block and pass scope to it', function() {
+                var block = jasmine.createSpy('block');
+                expectedScope = {nestedScope: {}}; 
+
+                subject('expectedScope', block); 
+
+                expect(block).toHaveBeenCalledWith(expectedScope);
+            });
+
+            it('Scope should expose changes made inside block', function() {
+                var blockExtendScope = function(scope) {
+                    scope.NewObject = {}; 
+                };
+                
+                subject('GlobalScope.NestedScope', blockExtendScope);
+            
+                expect(GlobalScope.NestedScope.NewObject).not.toBeUndefined();
             });
         });
     });
